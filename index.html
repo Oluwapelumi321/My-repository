@@ -5,6 +5,7 @@
   <title>User Management System</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    /* All your styling remains unchanged (good!) */
     * {
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
@@ -135,7 +136,7 @@
   <table>
     <thead>
       <tr>
-        <th>#</th>
+        <th>ID</th>
         <th>Name</th>
         <th>Email</th>
         <th>Password</th>
@@ -149,25 +150,32 @@
     const apiUrl = 'http://localhost:3000/api/users';
 
     async function fetchUsers() {
-      const res = await fetch(apiUrl);
-      const users = await res.json();
-      const table = document.getElementById('userTable');
-      table.innerHTML = '';
+      try {
+        console.log('Fetching users from:', apiUrl);
+        const res = await fetch(apiUrl);
+        if (!res.ok) throw new Error('Failed to fetch users');
+        const users = await res.json();
+        const table = document.getElementById('userTable');
+        table.innerHTML = '';
 
-      users.forEach((user, index) => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${index + 1}</td>
-          <td><input value="${user.name}" id="name-${user.id}" /></td>
-          <td><input value="${user.email}" id="email-${user.id}" /></td>
-          <td><input value="${user.password || ''}" id="password-${user.id}" /></td>
-          <td>
-            <button class="action update-btn" onclick="updateUser(${user.id})">Update</button>
-            <button class="action delete-btn" onclick="deleteUser(${user.id})">Delete</button>
-          </td>
-        `;
-        table.appendChild(row);
-      });
+        users.forEach((user, index) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td><input value="${user.name}" id="name-${user.id}" /></td>
+            <td><input value="${user.email}" id="email-${user.id}" /></td>
+            <td><input value="${user.password || ''}" id="password-${user.id}" /></td>
+            <td>
+              <button class="action update-btn" onclick="updateUser(${user.id})">Update</button>
+              <button class="action delete-btn" onclick="deleteUser(${user.id})">Delete</button>
+            </td>
+          `;
+          table.appendChild(row);
+        });
+      } catch (err) {
+  console.error('Fetch error (caught):', err);
+  alert('Fetch error: ' + err.message);
+}
     }
 
     document.getElementById('userForm').addEventListener('submit', async (e) => {
